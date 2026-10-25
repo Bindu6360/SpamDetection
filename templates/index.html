@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detection System - AI Powered Email & Message Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SpamGuard</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#detector" class="nav-link">Detector</a>
+                <a href="#history" class="nav-link">History</a>
+                <a href="#stats" class="nav-link">Statistics</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title">Spam Detection System</h1>
+            <p class="hero-subtitle">AI-Powered Email & Message Scanner</p>
+            <p class="hero-description">Identify spam messages with advanced machine learning. Protect your inbox instantly.</p>
+            <button class="btn-primary" onclick="scrollToDetector()">
+                <i class="fas fa-arrow-down"></i> Start Detecting
+            </button>
+        </div>
+        <div class="hero-animation">
+            <div class="animated-shield">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Detector Section -->
+    <section class="detector-section" id="detector">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-search"></i> Spam Detector
+            </h2>
+            <p class="section-subtitle">Paste your message below to check if it's spam</p>
+
+            <div class="detector-container">
+                <!-- Input Card -->
+                <div class="input-card glass-effect">
+                    <div class="input-group">
+                        <label for="messageInput" class="input-label">
+                            <i class="fas fa-envelope"></i> Enter Message or Email
+                        </label>
+                        <textarea 
+                            id="messageInput" 
+                            class="message-input" 
+                            placeholder="Paste your message or email text here... (Max 5000 characters)"
+                            maxlength="5000"
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 5000 characters
+                        </div>
+                    </div>
+
+                    <button id="detectBtn" class="btn-detect" onclick="detectSpam()">
+                        <span class="btn-text">
+                            <i class="fas fa-magic"></i> Detect Now
+                        </span>
+                        <span class="btn-loader hidden">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Result Card -->
+                <div id="resultCard" class="result-card glass-effect hidden">
+                    <div class="result-header">
+                        <h3>Detection Result</h3>
+                        <button class="btn-close" onclick="clearResult()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div id="resultContent" class="result-content">
+                        <!-- Results will be displayed here -->
+                    </div>
+
+                    <div class="result-actions">
+                        <button class="btn-secondary" onclick="copyMessage()">
+                            <i class="fas fa-copy"></i> Copy Message
+                        </button>
+                        <button class="btn-secondary" onclick="downloadResult()">
+                            <i class="fas fa-download"></i> Download Result
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section class="history-section" id="history">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i> Prediction History
+                </h2>
+                <button class="btn-secondary" onclick="clearAllHistory()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+            <p class="section-subtitle">View your recent spam detection predictions</p>
+
+            <div class="history-container glass-effect">
+                <div id="historyList" class="history-list">
+                    <p class="empty-state">No predictions yet. Start detecting spam!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section" id="stats">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-chart-pie"></i> Statistics
+            </h2>
+            <p class="section-subtitle">Overview of your detection statistics</p>
+
+            <div class="stats-grid">
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Predictions</div>
+                        <div class="stat-value" id="totalPredictions">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Spam Detected</div>
+                        <div class="stat-value" id="spamCount">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Legitimate Messages</div>
+                        <div class="stat-value" id="notSpamCount">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-effect">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Avg Confidence</div>
+                        <div class="stat-value" id="avgConfidence">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Spam Detection System. Built with <i class="fas fa-heart"></i> using Python, Flask & Machine Learning</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
